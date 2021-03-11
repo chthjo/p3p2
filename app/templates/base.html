@@ -1,0 +1,36 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Vacation</title>
+      {% else %}
+      <title>Welcome to Vacation</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>
+	    Vacation:
+	    <a href="{{ url_for('index') }}">Home</a>
+	    {% if current_user.is_anonymous %}
+	    <a href="{{ url_for('login') }}">Login</a>
+	    {% else %}
+	    <a href="{{ url_for('logout') }}">Logout</a>
+	    <a href="{{ url_for('request_week') }}">Request</a>
+	    <a href="{{ url_for('request_week1') }}">Request1</a>
+	    <a href="{{ url_for('check') }}">Check</a>
+	    <a href="{{ url_for('results') }}">Result</a>
+
+	    {% endif %}
+	</div>
+        <hr>
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	<ul>
+	    {% for messages in messages %}
+	    <li>{{ message }}</li>
+	    {% endfor %}
+	</ul>
+	{% endif %}
+	{% endwith %}
+        {% block content %}{% endblock %}
+    </body>
+</html>
