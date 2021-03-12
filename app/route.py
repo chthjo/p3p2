@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, requestWeek, requestWeek1, checkWeek
+from app.forms import LoginForm, RegistrationForm, requestWeek, checkWeek
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Calendar
 from werkzeug.urls import url_parse
@@ -57,26 +57,22 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
 @app.route('/request_week', methods=['GET','POST'])
 def request_week():
-    myCalendar = Calendar.query.all() 
+    myCalendar = Calendar.query.all()
     form = requestWeek()
     if form.validate_on_submit():
-        week_request = Calendar(week=form.week.data,user=form.user.data)
-        db.session.add(week_request)
-        db.session.commit()
-    return render_template('request.html', myCalendar=myCalendar, form=form)
-
-
-@app.route('/request_week1', methods=['GET','POST'])
-def request_week1():
-    myCalendar = Calendar.query.all()
-    form = requestWeek1()
-    if form.validate_on_submit():
+        valid = Calendar.query.filter_by(week=form.week.data, user=current_user.username).first()
+        if valid is not None :
+            flash('Invalid request')
+            return redirect(url_for('request'))
         week_request = Calendar(week=form.week.data,user=current_user.username)
         db.session.add(week_request)
         db.session.commit()
-    return render_template('request1.html', myCalendar=myCalendar, form=form)
+        return redirect(url_for('results'))
+    return render_template('request.html', myCalendar=myCalendar, form=form)
+
 @app.route('/check', methods=['GET','POST'])
 def check():
     form = checkWeek()
