@@ -29,19 +29,9 @@ class RegistrationForm(FlaskForm):
 
 class requestWeek(FlaskForm):
     week  = IntegerField('Enter a week number to request off:', validators=[DataRequired()])
-    user = StringField('Enter your name to reserve:', validators=[DataRequired()])
     submit = SubmitField('Submit Request')
 
     def validate_week(self, week):
-        wcheck = Calendar.query.filter_by(week=week.data).first()
-        if wcheck is not None:
-            raise ValidationError('This week is already being requested by a user')
-
-class requestWeek1(FlaskForm):
-    week  = IntegerField('Enter a week number to request off:', validators=[DataRequired()])
-    submit = SubmitField('Submit Request')
-
-    def validate_week1(self, week):
         wcheck = Calendar.query.filter_by(week=week.data).first()
         if wcheck is not None:
             raise ValidationError('This week is already being requested by a user')
